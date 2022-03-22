@@ -1,5 +1,5 @@
  import "./../db/connection";
- import "./../db/models/user.schema";
+ import UserModel from "./../db/models/user.schema";
 
           // Definir mètode registerUser()
           userManagement.registerUser =  async (req, res) => {
@@ -7,7 +7,7 @@
                 // Desar en una constant les dades que venen per POST
                 const dades = req;
                 // Crear una instància de l'Schema amb les dades rebudes
-                const newUser = new Schema({
+                const newUser = new UserModel({
 
                   Nombre: req.body.Nombre,
               
