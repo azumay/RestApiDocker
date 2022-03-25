@@ -1,12 +1,33 @@
-import mongoose from 'mongoose';
-const { Schema } = mongoose;
+const { Schema, model } = require("mongoose");
 
-const loginSchema = new Schema({
-  Nombre:  String, 
-  Apellido: String,
-  Mail:   String,
-  Password: String,
-  
-});
+const userSchema = new Schema(
+  {
+    Nombre: { 
+      type: String,
+      min: [3, "Longitud minima de 3 caracteres"],
+      max: [20, "Longitud maxima de 20 caracteres"],
+  },
+    Apellido: {
+      type: String 
+  },
+    Mail: {
+      type: String,
+      unique: true,
+      format: "email",
+      pattern: "^\\S+@\\S+\\.\\S+$",
+      required: [true, "El correo es obligatorio"],
+      /*validate: {
+          validator: function(v){
 
-const UserModel = mongoose.model('UserModel', loginSchema);
+          },
+          message: props => ${props.value}
+        */
+      
+  },
+    Password: {
+      type: String 
+  },
+}
+);
+
+module.exports = model("User", userSchema, "user");

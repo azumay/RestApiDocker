@@ -1,29 +1,30 @@
- import "./../db/connection";
- import UserModel from "./../db/models/user.schema";
+require("./../db/connection");
+const User = require("./../db/models/user.schema");
 
-          // Definir mètode registerUser()
-          userManagement.registerUser =  async (req, res) => {
-            try {
-                // Desar en una constant les dades que venen per POST
-                const dades = req;
-                // Crear una instància de l'Schema amb les dades rebudes
-                const newUser = new UserModel({
+//obj para exportar
+const userManagement = {};
 
-                  Nombre: req.body.Nombre,
-              
-                  Apellido: req.body.Apellido,
-              
-                  Mail: req.body.email,
+// Definir mètode registerUser()
 
-                  Password: req.body.Password
-                });
-                // Desar les dades amb el mètode .save(). Aquesta operació és asíncrona
-                //newUser.save();
-                // Enviar un missatge de confirmació 
-                
-            } catch (err) {
-              res.status(400).json({
-                  error: err
-              });
-            }
-          };
+userManagement.loginUser = async (req, res) => {
+  res.send("POST Request for Login");
+};
+
+userManagement.registerUser = async (req, res) => {
+  res.send("POST Request for Register");
+  try {
+    
+    const dataUser = req.body;
+
+    const newUser = new User(dataUser);
+
+    await newUser.save();
+
+  } catch (err) {
+    res.status(400).json({
+      error: err,
+    });
+  }
+};
+
+module.exports = userManagement;
