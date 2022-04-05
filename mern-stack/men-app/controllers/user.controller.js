@@ -1,6 +1,8 @@
 require("./../db/connection");
 const User = require("./../db/models/user.schema");
 
+const ColaUser = require("./../db/models/cola.schema");
+
 //obj para exportar
 const userManagement = {};
 
@@ -57,10 +59,16 @@ userManagement.registerUser = async (req, res) => {
     if (formatPassword.test(req.body.Password)) {
       //Comprobamos que no existe ese mail en la base de datos
       const foundUser = await User.findOne({ Mail: dataUser.Mail });
+      //const password = await bcrypt.hash(dataUser.Password, 10);
 
-      if (foundUser !== null) {
+      if (foundUser) {
         throw `{Mail : This mail already exist '${dataUser.Mail}' }`;
+        
+        
       } else {
+       
+        //dataUser.Password=password;
+
         const newUser = new User(dataUser);
         // Guardamos los datos con el mètode .save(). Esta operación es asíncrona
         await newUser.save();
@@ -74,5 +82,26 @@ userManagement.registerUser = async (req, res) => {
     });
   }
 };
+
+
+userManagement.colaUsers = async (req, res) => {
+  try {
+    
+    const dataUser = req.body;
+    
+      
+      const newUser = new ColaUser(dataUser);
+        // Guardamos los datos con el mètode .save(). Esta operación es asíncrona
+        await newUser.save();
+      
+    
+  } catch (err) {
+    res.status(400).json({
+      error: err,
+    });
+  }
+};
+
+
 
 module.exports = userManagement;
