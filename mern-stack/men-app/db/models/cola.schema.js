@@ -11,7 +11,13 @@ const colaSchema = new Schema(
     Telefono: {
       type: String 
   },
-}
-);
+    Servicio: {
+      type: String
+  }
+
+  },
+  {timestamps: true} 
+  );
+  new Schema({ name: String }, { timestamps: true });
 
 module.exports = model("Users", colaSchema, "cola");
