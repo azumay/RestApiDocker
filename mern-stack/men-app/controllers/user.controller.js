@@ -34,7 +34,12 @@ userManagement.loginUser = async (req, res) => {
       if (!comparePassword) {
         throw `{Mail o password incorrecto  }`;
       } else {
-        throw `{Bienvenido  }`;
+        var datosUser = await User.findOne({ Mail:  dataUser.Mail});
+        res.json([{
+          Nombre:datosUser.Nombre,
+          Apellido: datosUser.Apellido,
+          Mail: datosUser.Mail}]);
+
       }
     }
   } catch (err) {
