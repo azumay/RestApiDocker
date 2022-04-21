@@ -3,9 +3,12 @@ const User = require("./../db/models/user.schema");
 
 const ColaUser = require("./../db/models/cola.schema");
 
+
 //obj para exportar
 const userManagement = {};
 
+
+/** Practica M6 Regristro y Login **/
 
 userManagement.loginUser = async (req, res) => {
   try {
@@ -99,6 +102,44 @@ userManagement.colaUsers = async (req, res) => {
         // Guardamos los datos con el mètode .save(). Esta operación es asíncrona
         await newUser.save();
       
+    
+  } catch (err) {
+    res.status(400).json({
+      error: err,
+    });
+  }
+};
+
+userManagement.getCola = async (req, res) => {
+  
+  try {
+        var datosUser = await ColaUser.find().sort('0.datosUser._id')
+
+    
+        let datos;
+
+        
+      
+    datosUser.map(item=>{
+      
+      
+        datos= { Nombre: item.Nombre }
+         
+      
+      
+
+    });
+    
+     
+
+    console.log(datos);
+
+   
+   
+        res.json([{
+          datos
+        }]);
+
     
   } catch (err) {
     res.status(400).json({
