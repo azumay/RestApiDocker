@@ -100,8 +100,9 @@ userManagement.colaUsers = async (req, res) => {
       
       const newUser = new ColaUser(dataUser);
         // Guardamos los datos con el mètode .save(). Esta operación es asíncrona
-        await newUser.save();
-      
+       const espera = await newUser.save();
+
+       res.json(espera)
     
   } catch (err) {
     res.status(400).json({
@@ -113,31 +114,13 @@ userManagement.colaUsers = async (req, res) => {
 userManagement.getCola = async (req, res) => {
   
   try {
-        var datosUser = await ColaUser.find().sort('0.datosUser._id')
-
+        var datosUser = await ColaUser.find()
     
-        let datos;
-
         
-      
-    datosUser.map(item=>{
-      
-      
-        datos= { Nombre: item.Nombre }
-         
-      
-      
-
-    });
-    
-     
-
-    console.log(datos);
-
    
    
         res.json([{
-          datos
+          datosUser
         }]);
 
     
