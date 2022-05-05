@@ -91,7 +91,9 @@ userManagement.registerUser = async (req, res) => {
   }
 };
 
+/* M12 */
 
+/* AÑADIR USUARIOS A LA COLA */
 userManagement.colaUsers = async (req, res) => {
   try {
     
@@ -111,6 +113,7 @@ userManagement.colaUsers = async (req, res) => {
   }
 };
 
+/* OBTENER USUARIOS DE LA BASE DE DATOS */
 userManagement.getCola = async (req, res) => {
   
   try {
@@ -131,6 +134,26 @@ userManagement.getCola = async (req, res) => {
   }
 };
 
+/* BORRAR USUARIOS DE LA COLA */
+userManagement.removeUser = async (req, res) => {
+  try {
+    // Cogemos los datos del usuario que queremos borrar...
+    const dataUser = req.body._id;
+    
+    const elimina = await ColaUser.remove({_id: dataUser});
+
+    res.json([elimina]);
+
+  }
+  
+   catch (err) {
+    res.status(400).json({
+      error: err,
+    });
+  }
+
+ 
+};
 
 
 module.exports = userManagement;
