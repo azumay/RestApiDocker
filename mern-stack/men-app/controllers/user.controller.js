@@ -99,8 +99,14 @@ userManagement.colaUsers = async (req, res) => {
     
     const dataUser = req.body;
     
-      
+    const foundLast = await ColaUser.findOne().sort({'createdAt': 'descending'});
+
+    const lasTiquet = foundLast.Tiquet;
+
       const newUser = new ColaUser(dataUser);
+
+     newUser.Tiquet=(parseInt(lasTiquet+1));
+     
         // Guardamos los datos con el mètode .save(). Esta operación es asíncrona
        const espera = await newUser.save();
 
@@ -119,7 +125,11 @@ userManagement.getCola = async (req, res) => {
   try {
         var datosUser = await ColaUser.find()
     
-        
+        const foundLast = await ColaUser.findOne().sort({'createdAt': 'descending'});
+
+        const lasTiquet = foundLast.Tiquet;
+
+        console.log(lasTiquet)
    
    
         res.json([{
