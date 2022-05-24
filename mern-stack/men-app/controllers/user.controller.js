@@ -3,10 +3,8 @@ const User = require("./../db/models/user.schema");
 
 const ColaUser = require("./../db/models/cola.schema");
 
-
 //obj para exportar
 const userManagement = {};
-
 
 /** Practica M6 Regristro y Login **/
 
@@ -37,12 +35,14 @@ userManagement.loginUser = async (req, res) => {
       if (!comparePassword) {
         throw `{Mail o password incorrecto  }`;
       } else {
-        var datosUser = await User.findOne({ Mail:  dataUser.Mail});
-        res.json([{
-          Nombre:datosUser.Nombre,
-          Apellido: datosUser.Apellido,
-          Mail: datosUser.Mail}]);
-
+        var datosUser = await User.findOne({ Mail: dataUser.Mail });
+        res.json([
+          {
+            Nombre: datosUser.Nombre,
+            Apellido: datosUser.Apellido,
+            Mail: datosUser.Mail,
+          },
+        ]);
       }
     }
   } catch (err) {
@@ -71,10 +71,7 @@ userManagement.registerUser = async (req, res) => {
 
       if (foundUser) {
         throw `{Mail : This mail already exist '${dataUser.Mail}' }`;
-        
-        
       } else {
-       
         //dataUser.Password=password;
 
         const newUser = new User(dataUser);
@@ -93,25 +90,44 @@ userManagement.registerUser = async (req, res) => {
 
 /* M12 */
 
+/**
+ *  Función para agregar usuarios a la base de datos "cola",
+ *  primero se comprueba el último usuario de la cola y obtenemos
+ *  el num tiquet, si no hay usuario dejamos por defecto el valor 0 de tiquet.
+ *
+ * @param {*} req Datos que recibimos del usuario mediante POST
+ * @param {*} res Respuesta que devolvemos al usuario con los datos introducidos
+ */
+
 /* AÑADIR USUARIOS A LA COLA */
 userManagement.colaUsers = async (req, res) => {
   try {
-    
     const dataUser = req.body;
-    
-    const foundLast = await ColaUser.findOne().sort({'createdAt': 'descending'});
 
-    const lasTiquet = foundLast.Tiquet;
+    //Buscamos el último usuario de la cola
+    const foundLast = await ColaUser.findOne().sort({
+      createdAt: "descending",
+    });
 
-      const newUser = new ColaUser(dataUser);
+    //Iniciamos el num tiquet
+    let lasTiquet = 0;
 
-     newUser.Tiquet=(parseInt(lasTiquet+1));
-     
-        // Guardamos los datos con el mètode .save(). Esta operación es asíncrona
-       const espera = await newUser.save();
+    /*Si ha encontrado un usuario cambiamos el valor del tiquet con el num de 
+    ese ultimo usuario y sino no cambiamos el valor del tiquet*/
+    if (foundLast !== null) {
+      lasTiquet = foundLast.Tiquet;
+    }
 
-       res.json(espera)
-    
+    /*Creamos un Schema de ColaUser con los datos obtenidos del POST */
+    const newUser = new ColaUser(dataUser);
+
+    //Incrementamos en 1 el numero total de tiquets
+    newUser.Tiquet = parseInt(lasTiquet + 1);
+
+    // Guardamos los datos con el mètode .save(). Esta operación es asíncrona
+    const espera = await newUser.save();
+
+    res.json(espera);
   } catch (err) {
     res.status(400).json({
       error: err,
@@ -120,23 +136,23 @@ userManagement.colaUsers = async (req, res) => {
 };
 
 /* OBTENER USUARIOS DE LA BASE DE DATOS */
+
+/**
+ *  Función que consulta a la base de datos y nos devulve un
+ *  array de objetos con los usuarios de la cola
+ *
+ * @param {*} req No es necesario
+ * @param {*} res Devolvemos un array de objetos con los usuarios encontrados
+ */
 userManagement.getCola = async (req, res) => {
-  
   try {
-        var datosUser = await ColaUser.find()
-    
-        const foundLast = await ColaUser.findOne().sort({'createdAt': 'descending'});
+    var datosUser = await ColaUser.find();
 
-        const lasTiquet = foundLast.Tiquet;
-
-        console.log(lasTiquet)
-   
-   
-        res.json([{
-          datosUser
-        }]);
-
-    
+    res.json([
+      {
+        datosUser,
+      },
+    ]);
   } catch (err) {
     res.status(400).json({
       error: err,
@@ -145,25 +161,27 @@ userManagement.getCola = async (req, res) => {
 };
 
 /* BORRAR USUARIOS DE LA COLA */
+/**
+ *  Función para borrar un usuario en concreto de la base de datos
+ *
+ * @param {*} req Objeto JSON con el _id del usuario
+ * @param {*} res Nos devuelve un objeto del usuario eliminado de la base de datos
+ */
 userManagement.removeUser = async (req, res) => {
   try {
-    // Cogemos los datos del usuario que queremos borrar...
+    // Guardamos el id que nos mandan del usuario a eliminar
     const dataUser = req.body._id;
-    
-    const elimina = await ColaUser.remove({_id: dataUser});
+
+    // Borramos el usuario de la base de datos
+    const elimina = await ColaUser.remove({ _id: dataUser });
 
     res.json([elimina]);
-
-  }
-  
-   catch (err) {
+    
+  } catch (err) {
     res.status(400).json({
       error: err,
     });
   }
-
- 
 };
-
 
 module.exports = userManagement;
